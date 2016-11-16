@@ -1,0 +1,23 @@
+
+TARGET        kf__speedups.pyd
+TARGETTYPE    dll
+
+CAPABILITY    CommDD DiskAdmin LocalServices Location MultimediaDD NetworkControl NetworkServices PowerMgmt ProtServ ReadDeviceData ReadUserData SurroundingsDD SwEvent TrustedUI UserEnvironment WriteDeviceData WriteUserData
+
+bytepaircompresstarget
+
+SYSTEMINCLUDE    \epoc32\include\python25
+SYSTEMINCLUDE    \epoc32\include\stdapis
+SYSTEMINCLUDE    \epoc32\include
+
+// libc and euser are always needed when using main() entry point
+LIBRARY python25.lib libc.lib euser.lib
+LIBRARY libpthread.lib libdl.lib libm.lib
+
+SOURCE ..\simplejson\_speedups.c
+
+#if defined(WINS)
+deffile .\bwins\kf__speedups.def
+#else if defined(MARM) || defined(GCCE)
+deffile .\eabi\kf__speedups.def
+#endif
