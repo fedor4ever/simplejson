@@ -29,7 +29,12 @@ def additional_tests(suite=None):
         suite = unittest.TestSuite()
     for mod in (simplejson, simplejson.encoder, simplejson.decoder):
         suite.addTest(doctest.DocTestSuite(mod))
-    suite.addTest(doctest.DocFileSuite('../../index.rst'))
+#symbian port doesn't sypport relative path
+    if  sys.platform == 'symbian_s60':
+        pt = 'C:/resource/Python25/simplejson/tests/index.rst'
+        suite.addTest(doctest.DocFileSuite(pt, module_relative=False))
+    else:
+        suite.addTest(doctest.DocFileSuite('../../index.rst'))
     return suite
 
 
@@ -80,13 +85,22 @@ def all_tests_suite():
 
 
 def main():
-    runner = unittest.TextTestRunner(verbosity=1 + sys.argv.count('-v'))
+    if sys.platform == 'symbian_s60':
+        lg = "C:/logs/sjson.log"
+        f = open(lg, 'w')
+        runner = unittest.TextTestRunner(f, verbosity=4)
+	else:
+        runner = unittest.TextTestRunner(verbosity=1 + sys.argv.count('-v'))
     suite = all_tests_suite()
     raise SystemExit(not runner.run(suite).wasSuccessful())
+    if sys.platform == 'symbian_s60':
+	    f.close()
 
 
 if __name__ == '__main__':
     import os
     import sys
+    if sys.platform == 'symbian_s60':
+        __file__ = __name__
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     main()
